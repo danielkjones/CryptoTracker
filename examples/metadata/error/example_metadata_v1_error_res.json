@@ -1,0 +1,10 @@
+{
+    "status": {
+        "timestamp": "2025-01-15T01:07:22.922Z",
+        "error_code": 400,
+        "error_message": "Invalid value for \"symbol\": \"APPL\"",
+        "elapsed": 0,
+        "credit_count": 0,
+        "notice": null
+    }
+}
