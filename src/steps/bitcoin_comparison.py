@@ -30,8 +30,8 @@ class BitcoinComparisonStep:
             self.unpack_percent_change_24h
         )
 
-        bitcoin_percetage_change = self.bitcoin_percent_change_24h()
-        pricing_df["bitcoin_percent_change_24h"] = bitcoin_percetage_change
+        bitcoin_percentage_change = self.bitcoin_percent_change_24h()
+        pricing_df["bitcoin_percent_change_24h"] = bitcoin_percentage_change
 
         # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
         # the coin changed MORE than bitcoin.
