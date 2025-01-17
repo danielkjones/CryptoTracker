@@ -53,7 +53,7 @@ class CoinMarketCapApi:
         res = requests.get(url, headers=self.headers, params=parameters)
         return res.json()
 
-    def get_all_latest_listings(self) -> List[str]:
+    def get_all_latest_listings(self) -> List[Dict]:
         """Paginate through all the latest listings and return a list of the
         available CryptoCurrency listings
 
@@ -80,7 +80,7 @@ class CoinMarketCapApi:
 
         return listings
 
-    def get_metadata(self, symbols: str) -> Dict:
+    def get_metadata(self, symbols: str) -> List[Dict]:
         """Get Metadata on a singular or collection of CryptoCurrencies.
 
         TODO need to switch to using some sort of error handling on this
@@ -91,9 +91,10 @@ class CoinMarketCapApi:
             symbols (str): Comma separated value of Cypto Tickers to gather data on
 
         Returns:
-            Dict: Metadata on the
+            Dict: Metadata "data" object from the API response
         """
         url = urljoin(self.host, "/v1/cryptocurrency/info")
         params = {"symbol": symbols}
         res = requests.get(url=url, params=params, headers=self.headers)
-        return res.json()
+        metadata_obj = res.json()["data"]
+        return list(metadata_obj.values())

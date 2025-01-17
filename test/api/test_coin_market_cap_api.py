@@ -6,7 +6,7 @@ from unittest.mock import patch
 import pytest
 from dotenv import load_dotenv
 
-from src.coin_market_cap_api import CoinMarketCapApi
+from src.api.coin_market_cap_api import CoinMarketCapApi
 
 # TODO This particular class is interacting with the actual API right now
 # which is not a unit test, would need to change
@@ -19,21 +19,13 @@ def example_listings_return() -> Dict:
         Dict: JSON object that would be returned from the upstream API
     """
     curr_dir = dirname(__file__)
-    # Traversing up a directory using dirname()
+    # Traversing up directories using dirname()
     full_path = join(
-        dirname(curr_dir), "examples/listings/example_listings_all_res.json"
+        dirname(dirname(curr_dir)), "examples/listings/example_listings_all_res.json"
     )
     with open(full_path, "r") as file:
         jsn = json.load(file)
         return jsn
-
-
-@pytest.fixture(autouse=True, scope="module")
-def load_env():
-    """Load in the environment variables for any live tests"""
-    curr_dir = dirname(__file__)
-    env_path = join(dirname(curr_dir), ".env")
-    load_dotenv(dotenv_path=env_path)
 
 
 class TestCoinMarketCapApi:
@@ -54,7 +46,7 @@ class TestCoinMarketCapApi:
         assert listings.get("data") is not None
 
     @patch(
-        "src.coin_market_cap_api.CoinMarketCapApi.get_latest_listings",
+        "src.api.coin_market_cap_api.CoinMarketCapApi.get_latest_listings",
         return_value=example_listings_return(),
     )
     def test_get_all_listings(self, mock_get_latest_listings):
@@ -68,8 +60,8 @@ class TestCoinMarketCapApi:
         api = CoinMarketCapApi()
         metadata = api.get_metadata("BTC,ETH,DOGE")
 
-        assert metadata.get("status") is not None
-        assert metadata.get("data") is not None
-        assert "BTC" in metadata.get("data")
-        assert "DOGE" in metadata.get("data")
-        assert "ETH" in metadata.get("data")
+        # Potentially a flaky test depending on how the API responds
+        assert len(metadata) == 3
+        assert metadata[0]["symbol"] == "BTC"
+        assert metadata[1]["symbol"] == "DOGE"
+        assert metadata[2]["symbol"] == "ETH"
