@@ -79,3 +79,7 @@ class TestPricingStep:
         assert (
             len(set(list(df["symbol"]))) == 19
         ), "There should be no duplicate symbols"
+
+        assert (
+            len(os.listdir(TEST_PRICING_DIRECTORY)) == 1
+        ), "Test data should have been written out to the data lake location"

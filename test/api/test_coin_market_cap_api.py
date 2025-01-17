@@ -18,10 +18,9 @@ def example_listings_return() -> Dict:
     Returns:
         Dict: JSON object that would be returned from the upstream API
     """
-    curr_dir = dirname(__file__)
     # Traversing up directories using dirname()
     full_path = join(
-        dirname(dirname(curr_dir)), "examples/listings/example_listings_all_res.json"
+        dirname(dirname(__file__)), "mock_api_response/example_listings_latest_res.json"
     )
     with open(full_path, "r") as file:
         jsn = json.load(file)

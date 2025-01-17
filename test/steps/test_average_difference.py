@@ -47,4 +47,6 @@ class TestAverageDifference:
         assert (
             len(list(set(df["symbol"]))) == 19
         ), "There should be no repeats with the aggregation"
-        assert len(os.listdir(TEST_AVG_BITCOIN_DIFF_DIRECTORY)) == 1
+        assert (
+            len(os.listdir(TEST_AVG_BITCOIN_DIFF_DIRECTORY)) == 1
+        ), "Test data should have been written out to the data lake location"

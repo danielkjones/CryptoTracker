@@ -10,7 +10,9 @@ import pytest
 from src.steps.universe import UniverseStep
 from src.util.constants import TIMESTAMP_FORMAT
 
+TEST_TIMESTAMP = "20250116000000"
 TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "temp_data_lake/universe")
+TEST_LISTINGS_LOCATION = join(dirname(dirname(__file__)), "mock_data_lake/listings")
 
 
 def example_metadata_return() -> List[Dict]:
@@ -19,11 +21,10 @@ def example_metadata_return() -> List[Dict]:
     Returns:
         Dict: JSON object that would be returned from the upstream API
     """
-    curr_dir = dirname(__file__)
     # Traversing up directories using dirname()
     full_path = join(
-        dirname(dirname(curr_dir)),
-        "examples/metadata/success/example_metadata_v1_res.json",
+        dirname(dirname(__file__)),
+        "mock_api_response/example_metadata_v1_res.json",
     )
     with open(full_path, "r") as file:
         jsn = json.load(file)
@@ -55,7 +56,7 @@ class TestUniverse:
 
     def test_universe_base_path(self):
         # Generating a test here to confirm that this is the right pattern
-        path = UniverseStep().universe_base_path
+        path = UniverseStep(TEST_TIMESTAMP).universe_base_path
         expected_path = join(dirname(dirname(dirname(__file__))), "data_lake/universe")
         assert path == expected_path
 
@@ -64,12 +65,13 @@ class TestUniverse:
         return_value=example_metadata_return(),
     )
     def test_generate_universe(self, mock_get_metadata, clean_test_directory):
-        example_tickers = ["BTC", "DOGE", "ETH", "SOL"]
-        universe_step = UniverseStep()
+        universe_step = UniverseStep(TEST_TIMESTAMP)
         # Overwriting for testing purposes
         universe_step.universe_base_path = TEST_DATA_LAKE_LOCATION
-        timestamp = "20250116000000"
-        df = universe_step.generate_universe(example_tickers, timestamp)
+        universe_step.listings_base_path = TEST_LISTINGS_LOCATION
+        df = universe_step.generate_universe()
 
         assert len(df) == 4
-        assert len(os.listdir(TEST_DATA_LAKE_LOCATION)) == 1
+        assert (
+            len(os.listdir(TEST_DATA_LAKE_LOCATION)) == 1
+        ), "Test data should have been written out to the data lake location"

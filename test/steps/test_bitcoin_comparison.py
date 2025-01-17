@@ -48,3 +48,12 @@ class TestBitcoinComparison:
         step.listings_file_directory = TEST_LISTINGS_DIRECTORY
         step.bitcoin_comparison_directory = TEST_BITCOIN_COMPARISON_DIRECTORY
         df = step.generate_bitcoin_comparison()
+
+        assert df["percent_change_24h"] is not None
+        assert df["24h_against_bitcoin"] is not None
+        assert df["bitcoin_percent_change_24h"] is not None
+        assert df["LoadedWhen"] is not None
+
+        assert (
+            len(os.listdir(TEST_BITCOIN_COMPARISON_DIRECTORY)) == 1
+        ), "File should have been written out to data lake location"
