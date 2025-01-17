@@ -13,7 +13,7 @@ from src.util.constants import TIMESTAMP_FORMAT
 
 # TODO move this to a shared function somewhere instead of repeating
 
-TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "test_data_lake/listings")
+TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "temp_data_lake/listings")
 
 
 def example_listings_return() -> Dict:
@@ -68,7 +68,7 @@ class TestListings:
         # overwrite the output location for the sake of testing
         listings_step.listings_base_path = TEST_DATA_LAKE_LOCATION
         # going to make sure that all datetimestamps are in UTC
-        timestamp = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)
+        timestamp = "20250116000000"
         df = listings_step.generate_listings(timestamp=timestamp)
 
         assert len(df) == 15000

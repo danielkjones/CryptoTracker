@@ -11,7 +11,9 @@ class ListingsStep:
     def __init__(self):
         self.listings_file_format = "crypto_listings_{}.csv"
         # same as ../../data_lake/listings
-        self.listings_base_path = join(dirname(dirname(dirname(dirname(__file__)))))
+        self.listings_base_path = join(
+            dirname(dirname(dirname(__file__))), "data_lake/listings"
+        )
 
     def generate_listings(self, timestamp: str) -> pd.DataFrame:
         """Gets the listings from the upstream CoinMarketCapAPI, writes to datalake location

@@ -8,3 +8,7 @@ __pycache__/
 .env
 .env.*
 .secret
+
+
+# System Files
+.DS_Store

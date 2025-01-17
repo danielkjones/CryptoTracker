@@ -15,6 +15,9 @@ class UniverseStep:
             dirname(dirname(dirname(__file__))), "data_lake/universe"
         )
 
+    # TODO do this a more data engineering way. We have the dataset with all the
+    # information already. We should be able to use the data locations as the inputs
+
     def generate_universe(self, symbols: List[str], timestamp: str) -> pd.DataFrame:
         """For a list of Tickers, gather the metadata from the upstream API,
         save into the data lake, and return the dataframe for use in other

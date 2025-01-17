@@ -10,7 +10,7 @@ import pytest
 from src.steps.universe import UniverseStep
 from src.util.constants import TIMESTAMP_FORMAT
 
-TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "test_data_lake/listings")
+TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "temp_data_lake/universe")
 
 
 def example_metadata_return() -> List[Dict]:
@@ -53,6 +53,12 @@ def clean_test_directory():
 
 class TestUniverse:
 
+    def test_universe_base_path(self):
+        # Generating a test here to confirm that this is the right pattern
+        path = UniverseStep().universe_base_path
+        expected_path = join(dirname(dirname(dirname(__file__))), "data_lake/universe")
+        assert path == expected_path
+
     @patch(
         "src.api.coin_market_cap_api.CoinMarketCapApi.get_metadata",
         return_value=example_metadata_return(),
@@ -62,8 +68,7 @@ class TestUniverse:
         universe_step = UniverseStep()
         # Overwriting for testing purposes
         universe_step.universe_base_path = TEST_DATA_LAKE_LOCATION
-        # Generate UTC timestamp for testing
-        timestamp = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)
+        timestamp = "20250116000000"
         df = universe_step.generate_universe(example_tickers, timestamp)
 
         assert len(df) == 4
