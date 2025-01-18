@@ -28,7 +28,7 @@ class TestCoinMarketCapApi:
     def test_get_metadata_safe(self, mock_get_metadata):
         api = CoinMarketCapApi()
         fake_symbols = []
-        for i in range(201):
+        for i in range(152):
             fake_symbols.append(f"BTC{i}")
 
         metadata_objs = api.get_metadata_safe(fake_symbols)

@@ -1,6 +1,6 @@
 import os
 from typing import Dict, List
-from urllib.parse import urljoin
+from urllib.parse import quote_plus, urljoin
 
 import requests
 from retry import retry
@@ -86,34 +86,35 @@ class CoinMarketCapApi:
 
         return listings
 
-    def get_metadata_safe(self, symbols: List[str]) -> List[Dict]:
+    def get_metadata_safe(self, ids: List[str]) -> List[Dict]:
         """Due to the constraints of URI length, requests for metadata may
         need to be broken up into multiple requests.
 
-        Break up the symbols into batches before making requests for metadata.
+        Break up the ids into batches before making requests for metadata.
 
         Returns:
             List[Dict]: Metadata "data" objects from the API response
         """
-        batch_size = 100
+        batch_size = 75
         # Breaking up the entire list of symbols into batches no greater than 100 symbols long
-        symbol_batches = [
-            symbols[i : i + batch_size] for i in range(0, len(symbols), batch_size)
-        ]
+        id_batches = [ids[i : i + batch_size] for i in range(0, len(ids), batch_size)]
 
         # Create a list of the metadata objects from separate API calls
         metadata_objs = []
-        for symbol_batch in symbol_batches:
-            metadata_objs.extend(self.get_metadata(symbol_batch))
+        for id_batch in id_batches:
+            metadata_objs.extend(self.get_metadata(id_batch))
 
         return metadata_objs
 
-    @retry(tries=3, delay=2, backoff=2)
-    def get_metadata(self, symbols: List[str]) -> List[Dict]:
+    @retry(tries=7, delay=3, backoff=5)
+    def get_metadata(self, ids: List[str]) -> List[Dict]:
         """Get Metadata on a singular or collection of CryptoCurrencies.
 
         Using V1 endpoint instead of V2 endpoint, as we are making the assumption that
         only the highest rank coin with a given symbol is a coin of interest.
+
+        NOTE: Using a large number of retries, delay, and backoff since this API has caused
+            multiple 429 Client errors. May have room for optimization.
 
         Reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo
 
@@ -126,8 +127,9 @@ class CoinMarketCapApi:
             Dict: Metadata "data" object from the API response
         """
         url = urljoin(self.host, "/v1/cryptocurrency/info")
-        symbols_str = ",".join(symbols)
-        params = {"symbol": symbols_str}
+        # convert to a list of strings and join as comma separated values
+        ids_str = ",".join(map(str, ids))
+        params = {"id": ids_str}
         res = requests.get(url=url, params=params, headers=self.headers)
         # use requests library to raise exceptions based on status
         res.raise_for_status()
