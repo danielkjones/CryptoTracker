@@ -1,28 +1,31 @@
 import ast
-import json
-from os.path import dirname, join
+from os.path import join
 
 import pandas as pd
+
+from src.util.config import (
+    BITCOIN_COMPARISON_CSV_FORMAT,
+    BITCOIN_COMPARISON_DATA_LOCATION,
+    LISTINGS_CSV_FORMAT,
+    LISTINGS_DATA_LOCATION,
+    PRICING_CSV_FORMAT,
+    PRICING_DATA_LOCATION,
+)
 
 
 class BitcoinComparisonStep:
 
     def __init__(self, timestamp: str):
         self.timestamp = timestamp
+        # input dataset details
+        self.pricing_file_directory = PRICING_DATA_LOCATION
+        self.pricing_file_format = PRICING_CSV_FORMAT
 
-        self.pricing_file_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/pricing"
-        )
-        self.pricing_file_format = "coins_pricing_{}.csv"
-        self.listings_file_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/listings"
-        )
-
-        self.listings_file_format = "crypto_listings_{}.csv"
-        self.bitcoin_comparison_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/bitcoin_comparison"
-        )
-        self.bitcoin_comparison_file_format = "bitcoin_comparison_{}.csv"
+        self.listings_file_directory = LISTINGS_DATA_LOCATION
+        self.listings_file_format = LISTINGS_CSV_FORMAT
+        # output dataset details
+        self.bitcoin_comparison_directory = BITCOIN_COMPARISON_DATA_LOCATION
+        self.bitcoin_comparison_file_format = BITCOIN_COMPARISON_CSV_FORMAT
 
     def generate_bitcoin_comparison(self) -> pd.DataFrame:
         pricing_df = self.read_pricing()

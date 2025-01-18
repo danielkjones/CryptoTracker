@@ -1,21 +1,24 @@
 import os
-from os.path import dirname, join
+from os.path import join
 
 import pandas as pd
+
+from src.util.config import (
+    AVG_BITCOIN_DIFF_CSV_FORMAT,
+    AVG_BITCOIN_DIFF_DATA_LOCATION,
+    BITCOIN_COMPARISON_DATA_LOCATION,
+)
 
 
 class AverageDifferenceStep:
 
     def __init__(self, timestamp: str):
         self.timestamp = timestamp
-        self.bitcoin_comparison_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/bitcoin_comparison"
-        )
-
-        self.avg_bitcoin_diff_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/avg_bitcoin_diff"
-        )
-        self.avg_bitcoin_diff_file_format = "avg_bitcoin_diff_{}.csv"
+        # input dataset details
+        self.bitcoin_comparison_directory = BITCOIN_COMPARISON_DATA_LOCATION
+        # output dataset details
+        self.avg_bitcoin_diff_directory = AVG_BITCOIN_DIFF_DATA_LOCATION
+        self.avg_bitcoin_diff_file_format = AVG_BITCOIN_DIFF_CSV_FORMAT
 
     def generate_average_difference(self) -> pd.DataFrame:
         comparisons_df = self.read_all_bitcoin_comparisons()

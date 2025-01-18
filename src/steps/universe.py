@@ -1,28 +1,29 @@
-from os.path import dirname, join
+from os.path import join
 from typing import Dict, List
 
 import pandas as pd
 
 from src.api.coin_market_cap_api import CoinMarketCapApi
+from src.util.config import (
+    LISTINGS_CSV_FORMAT,
+    LISTINGS_DATA_LOCATION,
+    UNIVERSE_CSV_FORMAT,
+    UNIVERSE_DATA_LOCATION,
+)
 
 
 class UniverseStep:
 
     def __init__(self, timestamp: str):
         self.timestamp = timestamp
-        self.universe_file_format = "crypto_universe_{}.csv"
-        # Same as ../../data_lake/universe
-        self.universe_base_path = join(
-            dirname(dirname(dirname(__file__))), "data_lake/universe"
-        )
 
-        self.listings_base_path = join(
-            dirname(dirname(dirname(__file__))), "data_lake/listings"
-        )
-        self.listings_file_format = "crypto_listings_{}.csv"
+        # input dataset details
+        self.listings_base_path = LISTINGS_DATA_LOCATION
+        self.listings_file_format = LISTINGS_CSV_FORMAT
 
-    # TODO do this a more data engineering way. We have the dataset with all the
-    # information already. We should be able to use the data locations as the inputs
+        # output dataset details
+        self.universe_base_path = UNIVERSE_DATA_LOCATION
+        self.universe_file_format = UNIVERSE_CSV_FORMAT
 
     def generate_universe(self) -> pd.DataFrame:
         """For a list of Tickers, gather the metadata from the upstream API,

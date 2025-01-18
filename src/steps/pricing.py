@@ -1,8 +1,15 @@
-from os.path import dirname, join
-from typing import List
+from os.path import join
 
 import pandas as pd
 
+from src.util.config import (
+    COINS_TO_TRACK_CSV_NAME,
+    COINS_TO_TRACK_DATA_LOCATION,
+    LISTINGS_CSV_FORMAT,
+    LISTINGS_DATA_LOCATION,
+    PRICING_CSV_FORMAT,
+    PRICING_DATA_LOCATION,
+)
 from src.util.exceptions import InvalidSymbolException
 
 
@@ -11,22 +18,16 @@ class PricingStep:
     def __init__(self, timestamp: str):
         self.timestamp = timestamp
 
-        # TODO seeing a pattern here, these should be moved into constants
+        # input dataset details
+        self.configuration_file_directory = COINS_TO_TRACK_DATA_LOCATION
+        self.configuration_file_name = COINS_TO_TRACK_CSV_NAME
 
-        self.configuration_file_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/configuration"
-        )
-        self.configuration_file_name = "coins_to_track.csv"
+        self.listings_file_directory = LISTINGS_DATA_LOCATION
+        self.listings_file_format = LISTINGS_CSV_FORMAT
 
-        self.listings_file_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/listings"
-        )
-        self.listings_file_format = "crypto_listings_{}.csv"
-
-        self.pricing_file_directory = join(
-            dirname(dirname(dirname(__file__))), "data_lake/pricing"
-        )
-        self.pricing_file_format = "coins_pricing_{}.csv"
+        # output dataset details
+        self.pricing_file_directory = PRICING_DATA_LOCATION
+        self.pricing_file_format = PRICING_CSV_FORMAT
 
     def generate_pricing(self) -> pd.DataFrame:
         coins_df = self.read_coins_to_track()
@@ -38,7 +39,7 @@ class PricingStep:
         return deduped_pricing_df
 
     def read_coins_to_track(self) -> pd.DataFrame:
-        # Read in the CSV from the configuration location (it is a dataset)
+        # Read in the CSV from the configuration location
         df = pd.read_csv(
             join(self.configuration_file_directory, self.configuration_file_name)
         )

@@ -1,17 +1,13 @@
-import json
 import os
-from datetime import datetime, timezone
 from os.path import dirname, join
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents, example_listings_api_return
-from typing import Dict
 from unittest.mock import patch
 
 import pytest
 from pandas import DataFrame
 
 from src.steps.listings import ListingsStep
-from src.util.constants import TIMESTAMP_FORMAT
 
 # NOTE: Test Constants and helpers live in test.helpers to
 #  avoid repeat work

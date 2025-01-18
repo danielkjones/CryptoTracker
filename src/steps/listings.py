@@ -1,19 +1,19 @@
-from os.path import dirname, join
+from os.path import join
 from typing import Dict, List
 
 import pandas as pd
 
 from src.api.coin_market_cap_api import CoinMarketCapApi
+from src.util.config import LISTINGS_CSV_FORMAT, LISTINGS_DATA_LOCATION
 
 
 class ListingsStep:
 
     def __init__(self, timestamp: str):
         self.timestamp = timestamp
-        self.listings_file_format = "crypto_listings_{}.csv"
-        self.listings_base_path = join(
-            dirname(dirname(dirname(__file__))), "data_lake/listings"
-        )
+        # output dataset details
+        self.listings_base_path = LISTINGS_DATA_LOCATION
+        self.listings_file_format = LISTINGS_CSV_FORMAT
 
     def generate_listings(self) -> pd.DataFrame:
         """Gets the listings from the upstream CoinMarketCapAPI, writes to data lake location
