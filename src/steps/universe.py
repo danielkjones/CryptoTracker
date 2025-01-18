@@ -104,4 +104,4 @@ class UniverseStep:
         dataset_path = join(
             self.universe_base_path, self.universe_file_format.format(self.timestamp)
         )
-        df.to_csv(dataset_path)
+        df.to_csv(dataset_path, index=False)

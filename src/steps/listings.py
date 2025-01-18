@@ -67,4 +67,4 @@ class ListingsStep:
         dataset_path = join(
             self.listings_base_path, self.listings_file_format.format(self.timestamp)
         )
-        df.to_csv(dataset_path)
+        df.to_csv(dataset_path, index=False)

@@ -1,4 +1,5 @@
-from os.path import join
+from os.path import exists, join
+from typing import Optional
 
 import pandas as pd
 
@@ -29,14 +30,15 @@ class PricingStep:
         self.pricing_file_directory = PRICING_DATA_LOCATION
         self.pricing_file_format = PRICING_CSV_FORMAT
 
-    def generate_pricing(self) -> pd.DataFrame:
-        coins_df = self.read_coins_to_track()
-        listings_df = self.read_listings()
-        self.validate_symbols(coins_df=coins_df, listings_df=listings_df)
-        pricing_df = self.enhance_coins_to_track(coins_df, listings_df)
-        deduped_pricing_df = self.dedup_symbols(pricing_df)
-        self.write_dataframe(deduped_pricing_df)
-        return deduped_pricing_df
+    def generate_pricing(self) -> Optional[pd.DataFrame]:
+        if not self.dataset_exists():
+            coins_df = self.read_coins_to_track()
+            listings_df = self.read_listings()
+            self.validate_symbols(coins_df=coins_df, listings_df=listings_df)
+            pricing_df = self.enhance_coins_to_track(coins_df, listings_df)
+            deduped_pricing_df = self.dedup_symbols(pricing_df)
+            self.write_dataframe(deduped_pricing_df)
+            return deduped_pricing_df
 
     def read_coins_to_track(self) -> pd.DataFrame:
         # Read in the CSV from the configuration location
@@ -94,8 +96,20 @@ class PricingStep:
         deduped_pricing_df = pricing_df[pricing_df["rank"] == 1].drop(columns="rank")
         return deduped_pricing_df.reset_index(drop=True)
 
+    def dataset_exists(self) -> bool:
+        """Check to see if the file already exists. If it does
+        we should use that file instead of recreating.
+
+        Returns:
+            bool: True if exists, False otherwise
+        """
+        dataset_path = join(
+            self.pricing_file_directory, self.pricing_file_format.format(self.timestamp)
+        )
+        return exists(dataset_path)
+
     def write_dataframe(self, pricing_df: pd.DataFrame) -> None:
         dataset_path = join(
             self.pricing_file_directory, self.pricing_file_format.format(self.timestamp)
         )
-        pricing_df.to_csv(dataset_path)
+        pricing_df.to_csv(dataset_path, index=False)
