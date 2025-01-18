@@ -3,6 +3,9 @@ from typing import Dict, List
 from urllib.parse import urljoin
 
 import requests
+from retry import retry
+
+from src.util.config import COIN_MARKET_CAP_ACCESS_KEY, COIN_MARKET_CAP_HOST
 
 
 class CoinMarketCapApi:
@@ -12,8 +15,8 @@ class CoinMarketCapApi:
     """
 
     def __init__(self):
-        self.host = os.getenv("COIN_MARKET_CAP_HOST")
-        self.access_token = os.getenv("COIN_MARKET_CAP_ACCESS_KEY")
+        self.host = COIN_MARKET_CAP_HOST
+        self.access_token = COIN_MARKET_CAP_ACCESS_KEY
 
     @property
     def headers(self) -> Dict:
@@ -27,6 +30,7 @@ class CoinMarketCapApi:
             "X-CMC_PRO_API_KEY": self.access_token,
         }
 
+    @retry(tries=3, delay=2, backoff=2)
     def get_latest_listings(self, start: int, limit: int) -> Dict:
         """
         Call to get the latest Listings. This includes all the data for a singular page.
@@ -51,6 +55,8 @@ class CoinMarketCapApi:
             "sort": "market_cap",
         }
         res = requests.get(url, headers=self.headers, params=parameters)
+        # use requests library to raise exceptions based on status
+        res.raise_for_status()
         return res.json()
 
     def get_all_latest_listings(self) -> List[Dict]:
@@ -80,21 +86,50 @@ class CoinMarketCapApi:
 
         return listings
 
-    def get_metadata(self, symbols: str) -> List[Dict]:
+    def get_metadata_safe(self, symbols: List[str]) -> List[Dict]:
+        """Due to the constraints of URI length, requests for metadata may
+        need to be broken up into multiple requests.
+
+        Break up the symbols into batches before making requests for metadata.
+
+        Returns:
+            List[Dict]: Metadata "data" objects from the API response
+        """
+        batch_size = 100
+        # Breaking up the entire list of symbols into batches no greater than 100 symbols long
+        symbol_batches = [
+            symbols[i : i + batch_size] for i in range(0, len(symbols), batch_size)
+        ]
+
+        # Create a list of the metadata objects from separate API calls
+        metadata_objs = []
+        for symbol_batch in symbol_batches:
+            metadata_objs.extend(self.get_metadata(symbol_batch))
+
+        return metadata_objs
+
+    @retry(tries=3, delay=2, backoff=2)
+    def get_metadata(self, symbols: List[str]) -> List[Dict]:
         """Get Metadata on a singular or collection of CryptoCurrencies.
 
-        TODO need to switch to using some sort of error handling on this
+        Using V1 endpoint instead of V2 endpoint, as we are making the assumption that
+        only the highest rank coin with a given symbol is a coin of interest.
 
         Reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo
 
+        V2 reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV2CryptocurrencyInfo
+
         Args:
-            symbols (str): Comma separated value of Cypto Tickers to gather data on
+            symbols (str): Comma separated value of Cypto Symbols to gather data on
 
         Returns:
             Dict: Metadata "data" object from the API response
         """
         url = urljoin(self.host, "/v1/cryptocurrency/info")
-        params = {"symbol": symbols}
+        symbols_str = ",".join(symbols)
+        params = {"symbol": symbols_str}
         res = requests.get(url=url, params=params, headers=self.headers)
+        # use requests library to raise exceptions based on status
+        res.raise_for_status()
         metadata_obj = res.json()["data"]
         return list(metadata_obj.values())

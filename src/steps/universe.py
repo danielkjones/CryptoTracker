@@ -80,7 +80,7 @@ class UniverseStep:
                 }
         """
         api = CoinMarketCapApi()
-        metadata = api.get_metadata(",".join(symbols))
+        metadata = api.get_metadata_safe(symbols)
         return metadata
 
     def write_dataframe(self, df: pd.DataFrame) -> None:

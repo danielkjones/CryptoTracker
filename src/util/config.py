@@ -1,3 +1,4 @@
+from os import getenv
 from os.path import dirname, join
 
 TIMESTAMP_FORMAT = "%Y%m%d%H%M%S"
@@ -32,3 +33,7 @@ PRICING_CSV_FORMAT = "coins_pricing_{}.csv"
 
 UNIVERSE_DATA_LOCATION = join(dirname(dirname(dirname(__file__))), "data_lake/universe")
 UNIVERSE_CSV_FORMAT = "crypto_universe_{}.csv"
+
+# API INFORMATION
+COIN_MARKET_CAP_HOST = getenv("COIN_MARKET_CAP_HOST")
+COIN_MARKET_CAP_ACCESS_KEY = getenv("COIN_MARKET_CAP_ACCESS_KEY")

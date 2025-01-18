@@ -1,11 +1,7 @@
-import json
-from os.path import dirname, join
-from test.helpers import example_listings_api_return
-from typing import Dict
+from test.helpers import example_listings_api_return, example_metadata_api_return
 from unittest.mock import patch
 
 import pytest
-from dotenv import load_dotenv
 
 from src.api.coin_market_cap_api import CoinMarketCapApi
 
@@ -24,6 +20,22 @@ class TestCoinMarketCapApi:
         listings = api.get_all_latest_listings()
         # this is imperfect since we are mocking, but need to make sure we are paginating
         assert len(listings) >= 10648
+
+    @patch(
+        "src.api.coin_market_cap_api.CoinMarketCapApi.get_metadata",
+        return_value=example_metadata_api_return(),
+    )
+    def test_get_metadata_safe(self, mock_get_metadata):
+        api = CoinMarketCapApi()
+        fake_symbols = []
+        for i in range(201):
+            fake_symbols.append(f"BTC{i}")
+
+        metadata_objs = api.get_metadata_safe(fake_symbols)
+
+        # The fake response has 4 objects. We expect 3 API calls.
+        # Total list should have 4 x 3 = 12 objects
+        assert len(metadata_objs) == 12
 
     # TESTS BELOW HIT LIVE API ENVIRONMENT -
     #
