@@ -8,29 +8,26 @@ from src.api.coin_market_cap_api import CoinMarketCapApi
 
 class ListingsStep:
 
-    def __init__(self):
+    def __init__(self, timestamp: str):
+        self.timestamp = timestamp
         self.listings_file_format = "crypto_listings_{}.csv"
-        # same as ../../data_lake/listings
         self.listings_base_path = join(
             dirname(dirname(dirname(__file__))), "data_lake/listings"
         )
 
-    def generate_listings(self, timestamp: str) -> pd.DataFrame:
-        """Gets the listings from the upstream CoinMarketCapAPI, writes to datalake location
+    def generate_listings(self) -> pd.DataFrame:
+        """Gets the listings from the upstream CoinMarketCapAPI, writes to data lake location
         as a unique .csv, and returns the DataFrame for use in other workflow steps
 
         Args:
             timestamp (str): UTC Timestamp in the format YYYYMMDDHHMMSS for uniqueness
 
         Returns:
-            pd.DataFrame: Pandas DataFrame with the Crpto listings
+            pd.DataFrame: Pandas DataFrame with the Crypto listings
         """
         listings = self.fetch_listings_upstream()
-        # load listings into a dataframe
         df = pd.DataFrame(listings)
-        # write the listings to the output location with a timestamp
-        self.write_dataframe(df=df, timestamp=timestamp)
-        # return the dataframe that holds the listings so we can re-use
+        self.write_dataframe(df=df)
         return df
 
     def fetch_listings_upstream(self) -> List[Dict]:
@@ -39,13 +36,12 @@ class ListingsStep:
         Returns:
             List[Dict]: List of Coin Data
         """
-        # Fetch listings from the upstream
         api = CoinMarketCapApi()
         listings = api.get_all_latest_listings()
         return listings
 
-    def write_dataframe(self, df: pd.DataFrame, timestamp: str) -> None:
-        """Write the dataframe to the output datalake with the properly
+    def write_dataframe(self, df: pd.DataFrame) -> None:
+        """Write the dataframe to the output data lake with the properly
         timestamp formatting naming
 
         TODO Confirm that that this is the proper format for the CSV
@@ -55,6 +51,6 @@ class ListingsStep:
             timestamp (str): UTC Timestamp in YYYYMMDDHHMMSS format
         """
         dataset_path = join(
-            self.listings_base_path, self.listings_file_format.format(timestamp)
+            self.listings_base_path, self.listings_file_format.format(self.timestamp)
         )
         df.to_csv(dataset_path)

@@ -2,6 +2,8 @@ import json
 import os
 from datetime import datetime, timezone
 from os.path import dirname, join
+from test.helpers import TestConstants as tc
+from test.helpers import delete_directory_contents, example_listings_api_return
 from typing import Dict
 from unittest.mock import patch
 
@@ -11,67 +13,39 @@ from pandas import DataFrame
 from src.steps.listings import ListingsStep
 from src.util.constants import TIMESTAMP_FORMAT
 
-# TODO move this to a shared function somewhere instead of repeating
-
-TEST_DATA_LAKE_LOCATION = join(dirname(dirname(__file__)), "temp_data_lake/listings")
-
-
-def example_listings_return() -> Dict:
-    """Retrieve the example return from the listings call.
-
-    Returns:
-        Dict: JSON object that would be returned from the upstream API
-    """
-    # Traversing up directories using dirname()
-    full_path = join(
-        dirname(dirname(__file__)), "mock_api_response/example_listings_latest_res.json"
-    )
-    with open(full_path, "r") as file:
-        jsn = json.load(file)
-        return jsn
-
-
-def delete_directory_contents(directory: str) -> None:
-    """Delete the contents of a given directory
-
-    Args:
-        directory (str): Directory to delete files from
-    """
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
+# NOTE: Test Constants and helpers live in test.helpers to
+#  avoid repeat work
 
 
 @pytest.fixture
 def clean_test_directory():
-    delete_directory_contents(TEST_DATA_LAKE_LOCATION)
+    """Test writes out to Temp Listings Directory. Need to clean up
+    before and after tests.
+    """
+    delete_directory_contents(tc.TEMP_LISTINGS_DIRECTORY)
     yield
-    delete_directory_contents(TEST_DATA_LAKE_LOCATION)
+    delete_directory_contents(tc.TEMP_LISTINGS_DIRECTORY)
 
 
 class TestListings:
 
     def test_listings_base_path(self):
-        # Generating a test here to confirm that this is the right pattern
-        path = ListingsStep().listings_base_path
+        path = ListingsStep(tc.TEST_TIMESTAMP).listings_base_path
         expected_path = join(dirname(dirname(dirname(__file__))), "data_lake/listings")
         assert path == expected_path
 
     @patch(
         "src.api.coin_market_cap_api.CoinMarketCapApi.get_latest_listings",
-        return_value=example_listings_return(),
+        return_value=example_listings_api_return(),
     )
     def test_generate_listings(self, mock_get_latest_listings, clean_test_directory):
-        listings_step = ListingsStep()
-        # overwrite the output location for the sake of testing
-        listings_step.listings_base_path = TEST_DATA_LAKE_LOCATION
-        # going to make sure that all datetimestamps are in UTC
-        timestamp = "20250116000000"
-        df = listings_step.generate_listings(timestamp=timestamp)
+        listings_step = ListingsStep(tc.TEST_TIMESTAMP)
+        # Overwriting data location properties to use predictable test locations
+        listings_step.listings_base_path = tc.TEMP_LISTINGS_DIRECTORY
+        df = listings_step.generate_listings()
 
         assert len(df) == 15000
         assert isinstance(df, DataFrame)
         assert (
-            len(os.listdir(TEST_DATA_LAKE_LOCATION)) == 1
+            len(os.listdir(tc.TEMP_LISTINGS_DIRECTORY)) == 1
         ), "Test data should have been written out to data lake location"

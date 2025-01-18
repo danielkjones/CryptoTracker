@@ -1,44 +1,32 @@
 import os
 from os.path import dirname, join
+from test.helpers import TestConstants as tc
+from test.helpers import delete_directory_contents
 
 import pytest
 
 from src.steps.average_difference import AverageDifferenceStep
 
-TEST_TIMESTAMP = "20250116000000"
-TEST_BITCOIN_COMPARISON_DIRECTORY = join(
-    dirname(dirname(__file__)), "mock_data_lake/bitcoin_comparison"
-)
-TEST_AVG_BITCOIN_DIFF_DIRECTORY = join(
-    dirname(dirname(__file__)), "temp_data_lake/avg_bitcoin_diff"
-)
-
-
-def delete_directory_contents(directory: str) -> None:
-    """Delete the contents of a given directory
-
-    Args:
-        directory (str): Directory to delete files from
-    """
-    for filename in os.listdir(directory):
-        file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
+# NOTE: Test Constants and helpers live in test.helpers to
+#  avoid repeat work
 
 
 @pytest.fixture
 def clean_test_directory():
-    delete_directory_contents(TEST_AVG_BITCOIN_DIFF_DIRECTORY)
+    """Test writes out to Temp Avg Bitcoin Diff Directory. Need to clean up
+    before and after tests.
+    """
+    delete_directory_contents(tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY)
     yield
-    delete_directory_contents(TEST_AVG_BITCOIN_DIFF_DIRECTORY)
+    delete_directory_contents(tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY)
 
 
 class TestAverageDifference:
 
     def test_generate_average_difference(self, clean_test_directory):
-        step = AverageDifferenceStep(TEST_TIMESTAMP)
-        step.bitcoin_comparison_directory = TEST_BITCOIN_COMPARISON_DIRECTORY
-        step.avg_bitcoin_diff_directory = TEST_AVG_BITCOIN_DIFF_DIRECTORY
+        step = AverageDifferenceStep(tc.TEST_TIMESTAMP)
+        step.bitcoin_comparison_directory = tc.MOCK_BITCOIN_COMPARISONS_DIRECTORY
+        step.avg_bitcoin_diff_directory = tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY
 
         df = step.generate_average_difference()
 
@@ -48,5 +36,5 @@ class TestAverageDifference:
             len(list(set(df["symbol"]))) == 19
         ), "There should be no repeats with the aggregation"
         assert (
-            len(os.listdir(TEST_AVG_BITCOIN_DIFF_DIRECTORY)) == 1
+            len(os.listdir(tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY)) == 1
         ), "Test data should have been written out to the data lake location"
