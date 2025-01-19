@@ -2,6 +2,7 @@ from os import getenv
 from os.path import dirname, join
 
 TIMESTAMP_FORMAT = "%Y%m%d%H%M%S"
+LOGGER_NAME = "crypto_tracker_logger"
 
 # DATASET LOCATIONS
 #

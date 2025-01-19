@@ -10,12 +10,13 @@ from src.util.config import (
     BITCOIN_COMPARISON_DATA_LOCATION,
     LISTINGS_CSV_FORMAT,
     LISTINGS_DATA_LOCATION,
+    LOGGER_NAME,
     PRICING_CSV_FORMAT,
     PRICING_DATA_LOCATION,
 )
 from src.util.dataframe_ops import read_csv, write_csv
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class BitcoinComparisonStep:

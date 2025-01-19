@@ -37,29 +37,3 @@ class TestCoinMarketCapApi:
         # There should be 3 calls made for 500 ids.
         # Total list should have 4 x 3 = 12 objects
         assert len(metadata_objs) == 12
-
-    # TESTS BELOW HIT LIVE API ENVIRONMENT -
-    #
-    # Uncomment only if you configure .env for sandbox
-    # environment OR you are willing to hit API on your account.
-    #
-    # Leaving in case interaction with API needs further live testing.
-    #
-    # @pytest.mark.api_test
-    # def test_get_metadata(self):
-    #     api = CoinMarketCapApi()
-    #     metadata = api.get_metadata("BTC,ETH,DOGE")
-
-    #     # Potentially a flaky test depending on how the API responds
-    #     assert len(metadata) == 3
-    #     assert metadata[0]["symbol"] == "BTC"
-    #     assert metadata[1]["symbol"] == "DOGE"
-    #     assert metadata[2]["symbol"] == "ETH"
-    #
-    # @pytest.mark.api_test
-    # def test_get_listings(self):
-    #     api = CoinMarketCapApi()
-    #     listings = api.get_latest_listings(start=1, limit=100)
-
-    #     assert listings.get("status") is not None
-    #     assert listings.get("data") is not None

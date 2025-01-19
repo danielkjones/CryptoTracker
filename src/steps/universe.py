@@ -8,12 +8,13 @@ from src.api.coin_market_cap_api import CoinMarketCapApi
 from src.util.config import (
     LISTINGS_CSV_FORMAT,
     LISTINGS_DATA_LOCATION,
+    LOGGER_NAME,
     UNIVERSE_CSV_FORMAT,
     UNIVERSE_DATA_LOCATION,
 )
 from src.util.dataframe_ops import read_csv, write_csv
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class UniverseStep:

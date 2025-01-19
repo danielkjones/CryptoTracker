@@ -8,10 +8,11 @@ from src.util.config import (
     AVG_BITCOIN_DIFF_CSV_FORMAT,
     AVG_BITCOIN_DIFF_DATA_LOCATION,
     BITCOIN_COMPARISON_DATA_LOCATION,
+    LOGGER_NAME,
 )
 from src.util.dataframe_ops import read_csv, write_csv
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class AverageDifferenceStep:

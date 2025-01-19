@@ -13,11 +13,11 @@ from src.steps import (
     PricingStep,
     UniverseStep,
 )
-from src.util.config import TIMESTAMP_FORMAT
+from src.util.config import LOGGER_NAME, TIMESTAMP_FORMAT
 from src.util.exceptions import InvalidTimestampException
 
 # Creating Logger
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 logger.setLevel(logging.INFO)
 
 # Setting STD Out for logging
@@ -92,7 +92,8 @@ def run_workflow(timestamp: str) -> None:
 
     # 2. Use Crypto Currency list to generate universe of metadata
     logger.info(
-        "Generating universe of coin metadata for all active crypto currency listings"
+        "Generating universe of coin metadata for all active crypto currency listings "
+        "(this may take a few minutes due to API throttling limitations)"
     )
     UniverseStep(timestamp).generate_universe()
 

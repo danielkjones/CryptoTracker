@@ -10,6 +10,7 @@ from src.util.config import (
     COINS_TO_TRACK_DATA_LOCATION,
     LISTINGS_CSV_FORMAT,
     LISTINGS_DATA_LOCATION,
+    LOGGER_NAME,
     PRICING_CSV_FORMAT,
     PRICING_DATA_LOCATION,
     TIMESTAMP_FORMAT,
@@ -17,7 +18,7 @@ from src.util.config import (
 from src.util.dataframe_ops import read_csv, write_csv
 from src.util.exceptions import InvalidSymbolException
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class PricingStep:

@@ -5,10 +5,10 @@ from typing import Dict, List, Optional
 import pandas as pd
 
 from src.api.coin_market_cap_api import CoinMarketCapApi
-from src.util.config import LISTINGS_CSV_FORMAT, LISTINGS_DATA_LOCATION
+from src.util.config import LISTINGS_CSV_FORMAT, LISTINGS_DATA_LOCATION, LOGGER_NAME
 from src.util.dataframe_ops import write_csv
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(LOGGER_NAME)
 
 
 class ListingsStep:

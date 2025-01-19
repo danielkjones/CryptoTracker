@@ -2,7 +2,9 @@ import logging
 
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+from src.util.config import LOGGER_NAME
+
+logger = logging.getLogger(LOGGER_NAME)
 
 
 def read_csv(file_path: str) -> pd.DataFrame:
