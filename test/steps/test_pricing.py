@@ -38,6 +38,11 @@ class TestPricingStep:
         ):
             pricing.generate_pricing()
 
+    def test_iso_timestamp(self):
+        pricing = PricingStep(tc.TEST_TIMESTAMP)
+        timestamp = pricing.iso_timestamp
+        assert timestamp == "2025-01-16T00:00:00.000Z"
+
     def test_generate_pricing(self, clean_test_directory):
         pricing = PricingStep(tc.TEST_TIMESTAMP)
         # Overwriting data location properties to use predictable test locations
@@ -51,7 +56,7 @@ class TestPricingStep:
         assert df["IsTopCurrency"] is not None
         assert df["LoadedWhen"] is not None
         assert (
-            len(set(list(df["symbol"]))) == 19
+            len(set(list(df["Symbol"]))) == 19
         ), "There should be no duplicate symbols"
 
         assert (
