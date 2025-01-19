@@ -41,11 +41,11 @@ class TestUniverse:
         universe_step.listings_base_path = tc.MOCK_LISTINGS_DIRECTORY
         df = universe_step.generate_universe()
 
-        # Little hacky, but there are 5000 ids in the mock list.
+        # Little hacky, but there are 150000 ids in the mock list.
         # We make 1 metadata call for every 75 items.
-        # We expect to make 67 calls, returning 4 items each time.
-        # 4 * 67 = 268. So we expect the df to have 268 objects.
-        assert len(df) == 268
+        # We expect to make 200 calls, returning 4 items each time.
+        # 4 * 200 = 800. So we expect the df to have 800 objects.
+        assert len(df) == 800
         assert (
             len(os.listdir(tc.TEMP_UNIVERSE_DIRECTORY)) == 1
         ), "Test data should have been written out to the data lake location"

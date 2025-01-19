@@ -30,6 +30,32 @@ stdout_handler.setFormatter(formatter)
 logger.addHandler(stdout_handler)
 
 
+def main() -> None:
+    """Configure timestamp for the execution and call the main driver.
+
+    The timestamp is either generated from current time in UTC, or from end user input.
+    """
+    # Optionally can add '--timestamp' arg
+    parser = argparse.ArgumentParser(description="Processing any optional flags")
+    parser.add_argument(
+        "--timestamp",
+        help="Optional flag for setting timestamp in YYYYMMDDHHMMSS format for execution. Helpful for re-running partially complete workflows.",
+    )
+    args = parser.parse_args()
+
+    if args.timestamp:
+        logger.info(
+            "Timestamp provided. Will attempt to use cached values when executing."
+        )
+        analysis_timestamp = args.timestamp
+    else:
+        # Using a singular UTC datetime stamp in YYYYMMDDHHMMSS format.
+        # Used so we can track all files generated through a singular execution.
+        analysis_timestamp = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)
+
+    run_workflow(analysis_timestamp)
+
+
 def run_workflow(timestamp: str):
     """Main Driver for running the data workflow
 
@@ -71,28 +97,6 @@ def run_workflow(timestamp: str):
         "Generating dataset with average difference in 24h percent change vs Bitcoin across all executions"
     )
     df: pd.DataFrame = AverageDifferenceStep(timestamp).generate_average_difference()
-
-
-def main() -> None:
-
-    parser = argparse.ArgumentParser(description="Processing any optional flags")
-    parser.add_argument(
-        "--timestamp",
-        help="Optional flag for setting timestamp in YYYYMMDDHHMMSS format for execution. Helpful for re-running partially complete workflows.",
-    )
-    args = parser.parse_args()
-
-    if args.timestamp:
-        logger.info(
-            "Timestamp provided. Will attempt to use cached values when executing."
-        )
-        analysis_timestamp = args.timestamp
-    else:
-        # Using a singular UTC datetime stamp in YYYYMMDDHHMMSS format.
-        # Used so we can track all files generated through a singular execution.
-        analysis_timestamp = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)
-
-    run_workflow(analysis_timestamp)
 
 
 if __name__ == "__main__":
