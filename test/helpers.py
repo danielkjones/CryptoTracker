@@ -24,6 +24,9 @@ class TestConstants:
     )
 
     # Mock data locations, to be read in for test cases
+    MOCK_AVG_BITCOIN_DIFF_DIRECTORY = join(
+        dirname(__file__), "mock_data_lake/avg_bitcoin_diff"
+    )
     MOCK_BITCOIN_COMPARISONS_DIRECTORY = join(
         dirname(__file__), "mock_data_lake/bitcoin_comparison"
     )

@@ -8,11 +8,13 @@ import pandas as pd
 from src.steps import (
     AverageDifferenceStep,
     BitcoinComparisonStep,
+    DisplayAveragesStep,
     ListingsStep,
     PricingStep,
     UniverseStep,
 )
 from src.util.config import TIMESTAMP_FORMAT
+from src.util.exceptions import InvalidTimestampException
 
 # Creating Logger
 logger = logging.getLogger(__name__)
@@ -48,6 +50,7 @@ def main() -> None:
             "Timestamp provided. Will attempt to use cached values when executing."
         )
         analysis_timestamp = args.timestamp
+        validate_timestamp_format(analysis_timestamp)
     else:
         # Using a singular UTC datetime stamp in YYYYMMDDHHMMSS format.
         # Used so we can track all files generated through a singular execution.
@@ -56,7 +59,24 @@ def main() -> None:
     run_workflow(analysis_timestamp)
 
 
-def run_workflow(timestamp: str):
+def validate_timestamp_format(timestamp: str) -> None:
+    """Validate user input to ensure process will not break
+
+    Args:
+        timestamp (str): Timestamp that should be in YYYYMMDDHHMMSS format
+
+    Raises:
+        InvalidTimestampException: Raise exception if timestamp is invalid
+    """
+    try:
+        _ = datetime.strptime(timestamp, TIMESTAMP_FORMAT)
+    except Exception as e:
+        msg = f"Invalid timestamp input: {timestamp}. Should be in YYYYMMDDHHMMSS format for process. Re-run process with valid timestamp or omit timestamp flag."
+        logger.error(msg)
+        raise InvalidTimestampException(msg)
+
+
+def run_workflow(timestamp: str) -> None:
     """Main Driver for running the data workflow
 
     Args:
@@ -96,7 +116,12 @@ def run_workflow(timestamp: str):
     logger.info(
         "Generating dataset with average difference in 24h percent change vs Bitcoin across all executions"
     )
-    df: pd.DataFrame = AverageDifferenceStep(timestamp).generate_average_difference()
+    AverageDifferenceStep(timestamp).generate_average_difference()
+
+    ######## END USER DISPLAY ########
+    # 6. Fetch final dataset for display
+    logger.info("Gathering average difference dataset for display to end user")
+    DisplayAveragesStep(timestamp).display_averages()
 
 
 if __name__ == "__main__":

@@ -3,16 +3,12 @@
 ## TODO
 
 Feature 
-- Fix timestamps in the CSVs
-- Need to have a step that will read the output and print / log for the end user
 - Basic logging
-- Trim / Rename data that is in the pricing data frame
 
 
 Testings
 - Confirm that the CSV outputs all make sense
 - Run end-to-end test on the code
-
 
 Quality
 - Ensure proper commenting
@@ -22,8 +18,11 @@ Quality
 ## DONE 
 
 Feature
+- Need to have a step that will read the output and print / log for the end user
 - Potentially unpack the Pricing data further. It's not usable for an analyst
 - Error handling if any of the datasets do not exist
+- Fix timestamps in the CSVs
+- Trim / Rename data that is in the pricing data frame
 
 
 
