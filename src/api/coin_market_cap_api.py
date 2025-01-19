@@ -37,8 +37,6 @@ class CoinMarketCapApi:
 
         Reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyListingsLatest
 
-        TODO Need retries and error handling
-
         Args:
             start (int): 1-indexed start index to retrieve from the list
             limit (int): Number of listings to return (1-5000)
@@ -62,9 +60,6 @@ class CoinMarketCapApi:
     def get_all_latest_listings(self) -> List[Dict]:
         """Paginate through all the latest listings and return a list of the
         available CryptoCurrency listings
-
-        TODO need to test this against live data, but this is expensive so holding
-        off for now
 
         Returns:
             List[Dict]: Returns Dict information on all the available listings
@@ -121,7 +116,7 @@ class CoinMarketCapApi:
         """Get Metadata on a singular or collection of CryptoCurrencies using CMC IDs.
 
         NOTE: Using a large number of retries, delay, and backoff since this API has caused
-            multiple 429 Client errors. May have room for optimization.
+            multiple 429 Client errors. Potential room for optimization.
 
         Reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo
 

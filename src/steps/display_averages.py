@@ -9,6 +9,12 @@ from src.util.dataframe_ops import read_csv
 class DisplayAveragesStep:
 
     def __init__(self, timestamp: str):
+        """Step object that reads in average difference of 24 hour percent change of the
+        a currency vs. Bitcoin from data lake and pretty prints output to the end user.
+
+        Args:
+            timestamp (str): UTC Timestamp of execution in YYYYMMDDHHMMSS
+        """
         self.timestamp = timestamp
         # input dataset details
         self.avg_bitcoin_diff_directory = AVG_BITCOIN_DIFF_DATA_LOCATION

@@ -22,6 +22,13 @@ logger = logging.getLogger(LOGGER_NAME)
 class BitcoinComparisonStep:
 
     def __init__(self, timestamp: str):
+        """Step object that takes in pricing data and calculates the difference of
+        24 hour percent change of a currency vs. Bitcoin. Writes output to data lake
+        as .csv.
+
+        Args:
+            timestamp (str): UTC Timestamp of execution in YYYYMMDDHHMMSS
+        """
         self.timestamp = timestamp
         # input dataset details
         self.pricing_file_directory = PRICING_DATA_LOCATION
@@ -55,6 +62,17 @@ class BitcoinComparisonStep:
         )
 
     def generate_bitcoin_comparison(self) -> Optional[pd.DataFrame]:
+        """Generates Bitcoin comparison file from pricing file input.
+        Adds in Bitcoin percent change data for reference. Removes unneeded pricing
+        data. Writes output to data lake.
+
+        If there already exists a file for the given execution timestamp, skips step to
+        avoid repeat work.
+
+        Returns:
+            Optional[pd.DataFrame]: Dataframe with Bitcoin comparison data for the given
+                symbols. None if the file already exists.
+        """
 
         if exists(self.bitcoin_comparison_csv):
             logger.info(
@@ -114,6 +132,12 @@ class BitcoinComparisonStep:
         ).reset_index(drop=True)
 
     def bitcoin_percent_change_24h(self) -> float:
+        """Pull the bitcoin percent change from the raw listings data in the
+        data lake.
+
+        Returns:
+            float: Bitcoin percent change in last 24 hours
+        """
         # Get the bitcoin percent change from the listings dataset
         listing_df = read_csv(self.listings_csv)
         # get the bitcoin quote from the listing df
