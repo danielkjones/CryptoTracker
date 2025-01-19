@@ -31,9 +31,9 @@ class TestAverageDifference:
         df = step.generate_average_difference()
 
         assert len(df) == 19
-        assert df["Avg_24h_Bitcoin_Diff"] is not None
+        assert df["AvgBitcoinVsCurrency24hPercentChangeDiff"] is not None
         assert (
-            len(list(set(df["symbol"]))) == 19
+            len(list(set(df["Symbol"]))) == 19
         ), "There should be no repeats with the aggregation"
         assert (
             len(os.listdir(tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY)) == 1

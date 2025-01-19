@@ -61,13 +61,12 @@ class BitcoinComparisonStep:
             )
         else:
             pricing_df = read_csv(self.pricing_csv)
-            pricing_df["bitcoin_percent_change_24h"] = self.bitcoin_percent_change_24h()
+            pricing_df["BitcoinPercentChange24h"] = self.bitcoin_percent_change_24h()
 
             # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
             # the coin changed MORE than bitcoin.
-            pricing_df["24h_against_bitcoin"] = (
-                pricing_df["quote.USD.percent_change_24h"]
-                - pricing_df["bitcoin_percent_change_24h"]
+            pricing_df["BitcoinVsCurrency24hPercentChangeDiff"] = (
+                pricing_df["PercentChange24h"] - pricing_df["BitcoinPercentChange24h"]
             )
 
             comparison_df = self.trim_df_values(pricing_df)
@@ -78,18 +77,23 @@ class BitcoinComparisonStep:
 
     def trim_df_values(self, comparison_df: pd.DataFrame) -> pd.DataFrame:
         """There are only a few values that we want to have in this dataset
-        to avoid cluttering for the end user
+        to avoid cluttering for the end user.
+
+        Saving information to track the identity of the coin, time of the
+        data load, and numbers related to percent change over the last
+        24 hours.
 
         Returns:
             pd.DataFrame: DataFrame with extraneous information removed
         """
         return comparison_df[
             [
-                "symbol",
-                "name",
-                "24h_against_bitcoin",
-                "quote.USD.percent_change_24h",
-                "bitcoin_percent_change_24h",
+                "ID",
+                "Symbol",
+                "Name",
+                "BitcoinVsCurrency24hPercentChangeDiff",
+                "PercentChange24h",
+                "BitcoinPercentChange24h",
                 "LoadedWhen",
             ]
         ]
@@ -105,16 +109,14 @@ class BitcoinComparisonStep:
             pd.DataFrame: DF Sorted by the difference from smallest to largest
         """
         return comparison_df.sort_values(
-            by="24h_against_bitcoin", ascending=True
+            by="BitcoinVsCurrency24hPercentChangeDiff", ascending=True
         ).reset_index(drop=True)
 
     def bitcoin_percent_change_24h(self) -> float:
-        # Need to get the value of bitcoin from one of the other layers
-        # It may be worthwhile modifying in the near future to have a
-        # clean set of listings... TBD
+        # Get the bitcoin percent change from the listings dataset
         listing_df = read_csv(self.listings_csv)
         # get the bitcoin quote from the listing df
-        bitcoin_change = listing_df.loc[listing_df["name"] == "Bitcoin"][
+        bitcoin_change: pd.Series = listing_df.loc[listing_df["name"] == "Bitcoin"][
             "quote.USD.percent_change_24h"
         ]
-        return bitcoin_change
+        return float(bitcoin_change.values[0])

@@ -42,14 +42,18 @@ class AverageDifferenceStep:
             # Group by symbol across all datasets and get average difference
             # in 24h percent change against bitcoin
             avg_comparisons_df = (
-                comparisons_df.groupby("symbol")["24h_against_bitcoin"]
+                comparisons_df.groupby("Symbol")[
+                    "BitcoinVsCurrency24hPercentChangeDiff"
+                ]
                 .mean()
                 .reset_index()
             )
 
             bitcoin_diff_df = avg_comparisons_df.rename(
-                columns={"24h_against_bitcoin": "Avg_24h_Bitcoin_Diff"}
-            )
+                columns={
+                    "BitcoinVsCurrency24hPercentChangeDiff": "AvgBitcoinVsCurrency24hPercentChangeDiff"
+                }
+            ).sort_values("AvgBitcoinVsCurrency24hPercentChangeDiff", ascending=True)
 
             write_csv(self.avg_bitcoin_diff_csv, bitcoin_diff_df)
             return bitcoin_diff_df

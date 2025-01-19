@@ -31,8 +31,12 @@ class TestBitcoinComparison:
         step.bitcoin_comparison_directory = tc.TEMP_BITCOIN_COMPARISONS_DIRECTORY
         df = step.generate_bitcoin_comparison()
 
-        assert df["24h_against_bitcoin"] is not None
-        assert df["bitcoin_percent_change_24h"] is not None
+        assert df["ID"] is not None
+        assert df["Symbol"] is not None
+        assert df["Name"] is not None
+        assert df["BitcoinVsCurrency24hPercentChangeDiff"] is not None
+        assert df["PercentChange24h"] is not None
+        assert df["BitcoinPercentChange24h"] is not None
         assert df["LoadedWhen"] is not None
 
         assert (
