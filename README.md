@@ -79,6 +79,11 @@ to pick up the process where it left off.
 ## Devs Only
 
 ### Testing
+Install dev dependencies 
+```
+pipenv install --dev
+```
+
 Run following to run unit tests from command line 
 ```
 pipenv run pytest
