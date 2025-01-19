@@ -22,7 +22,7 @@ Create a free account and access key from the [CoinMarketCap API Signup Page](ht
 Create a `.env` file in the root directory of this project with the following values
 
 ```
-COIN_MARKET_CAP_ACCESS_KEY = {your access key for CoinMarketCap API}
+COIN_MARKET_CAP_ACCESS_KEY = "{your access key for CoinMarketCap API here}"
 COIN_MARKET_CAP_HOST = "https://pro-api.coinmarketcap.com/"
 ```
 
@@ -66,7 +66,7 @@ This program produces the following datasets (with the exception of `Coins to Tr
 | Universe                  | data_lake/universe/           | crypto_universe_YYYYMMDDHHMMSS.csv    | Bronze               | Raw cryptocurrency metadata for all active currencies from CMC API.                                     |
 | Pricing                   | data_lake/pricing/            | coins_pricing_YYYYMMDDHHMMSS.csv      | Silver               | Normalized pricing data on all cryptocurrencies provided in `Coins to Track`.                           |
 | Bitcoin Comparison        | data_lake/bitcoin_comparison/ | bitcoin_comparison_YYYYMMDDHHMMSS.csv | Gold                 | Comparison of 24-hour percentage change of cryptocurrency symbols in `Coins to Track` against Bitcoin's 24-hour percentage change. |
-| Average Bitcoin Difference| data_lake/avg_bitcoin_diff    | avg_bitcoin_diff_YYYYMMDDHHMMSS.csv   | Gold                 | The average difference of 24-hour percentage change of cryptocurrency symbols in `Coins to Track` against Bitcoin's 24-hour percentage change for each day the process is run. |
+| Average Bitcoin Difference| data_lake/avg_bitcoin_diff/   | avg_bitcoin_diff_YYYYMMDDHHMMSS.csv   | Gold                 | The average difference of 24-hour percentage change of cryptocurrency symbols in `Coins to Track` against Bitcoin's 24-hour percentage change for each day the process is run. |
 
 
 **NOTE**: Each dataset has a UTC timestamp in the format `YYYYMMDDHHMMSS` appended to the filename. Files with the same 
