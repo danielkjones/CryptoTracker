@@ -1,3 +1,4 @@
+import logging
 import os
 from os.path import exists, join
 
@@ -9,6 +10,8 @@ from src.util.config import (
     BITCOIN_COMPARISON_DATA_LOCATION,
 )
 from src.util.dataframe_ops import read_csv, write_csv
+
+logger = logging.getLogger(__name__)
 
 
 class AverageDifferenceStep:
@@ -29,7 +32,11 @@ class AverageDifferenceStep:
         )
 
     def generate_average_difference(self) -> pd.DataFrame:
-        if not exists(self.avg_bitcoin_diff_csv):
+        if exists(self.avg_bitcoin_diff_csv):
+            logger.info(
+                f"Dataset already exists at '{self.avg_bitcoin_diff_csv}'. Using pre-existing dataset instead of generating new dataset. \nIf you desire to generate a new dataset re-run without providing a timestamp."
+            )
+        else:
             comparisons_df = self.read_all_bitcoin_comparisons()
 
             # Group by symbol across all datasets and get average difference

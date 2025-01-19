@@ -1,4 +1,5 @@
 import ast
+import logging
 from os.path import exists, join
 from typing import Optional
 
@@ -13,6 +14,8 @@ from src.util.config import (
     PRICING_DATA_LOCATION,
 )
 from src.util.dataframe_ops import read_csv, write_csv
+
+logger = logging.getLogger(__name__)
 
 
 class BitcoinComparisonStep:
@@ -52,7 +55,11 @@ class BitcoinComparisonStep:
 
     def generate_bitcoin_comparison(self) -> Optional[pd.DataFrame]:
 
-        if not exists(self.bitcoin_comparison_csv):
+        if exists(self.bitcoin_comparison_csv):
+            logger.info(
+                f"Dataset already exists at '{self.bitcoin_comparison_csv}'. Using pre-existing dataset instead of generating new dataset. \nIf you desire to generate a new dataset re-run without providing a timestamp."
+            )
+        else:
             pricing_df = read_csv(self.pricing_csv)
             pricing_df["bitcoin_percent_change_24h"] = self.bitcoin_percent_change_24h()
 

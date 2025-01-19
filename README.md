@@ -6,7 +6,6 @@ Feature
 - Fix timestamps in the CSVs
 - Need to have that function that reads the output, prints the output
 - Basic logging
-- Error handling if any of the datasets do not exist
 
 Testings
 - Confirm that the CSV outputs all make sense
@@ -20,9 +19,9 @@ Quality
 
 ## DONE 
 
-
 Feature
 - Potentially unpack the Pricing data further. It's not usable for an analyst
+- Error handling if any of the datasets do not exist
 
 
 
