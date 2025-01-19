@@ -95,7 +95,17 @@ class CoinMarketCapApi:
         Returns:
             List[Dict]: Metadata "data" objects from the API response
         """
-        batch_size = 75
+        # Logic behind batch size:
+        # - generally accepted "max_length" for URI = 2000 chars
+        # - "host_length" (with "?id=") = 60 chars
+        # - current "largest_id_size" = 5 chars
+        # - "buffer" for each ID (for growth if IDs get large) = 2 chars
+        # - "comma" for each ID = 1 char
+        #
+        # max_batch_size = (max_length - host_length) / (largest_id_size + buffer + comma)
+        # max_batch_size = (2000 - 60) / (5 + 2 + 1 ) = 242.5
+        batch_size = 240
+
         # Breaking up the entire list of symbols into batches no greater than 100 symbols long
         id_batches = [ids[i : i + batch_size] for i in range(0, len(ids), batch_size)]
 

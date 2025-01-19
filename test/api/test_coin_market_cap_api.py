@@ -28,12 +28,13 @@ class TestCoinMarketCapApi:
     def test_get_metadata_safe(self, mock_get_metadata):
         api = CoinMarketCapApi()
         fake_symbols = []
-        for i in range(152):
+        for i in range(500):
             fake_symbols.append(f"BTC{i}")
 
         metadata_objs = api.get_metadata_safe(fake_symbols)
 
-        # The fake response has 4 objects. We expect 3 API calls.
+        # The fake response has 4 objects. We make 1 api call for every 240 ids.
+        # There should be 3 calls made for 500 ids.
         # Total list should have 4 x 3 = 12 objects
         assert len(metadata_objs) == 12
 
