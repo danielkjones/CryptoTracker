@@ -82,8 +82,7 @@ class BitcoinComparisonStep:
             pricing_df = read_csv(self.pricing_csv)
             pricing_df["BitcoinPercentChange24h"] = self.bitcoin_percent_change_24h()
 
-            # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
-            # the coin changed MORE than bitcoin.
+            # Finding difference between coin percentage change and Bitcoin percentage change
             pricing_df["BitcoinVsCurrency24hPercentChangeDiff"] = (
                 pricing_df["PercentChange24h"] - pricing_df["BitcoinPercentChange24h"]
             )

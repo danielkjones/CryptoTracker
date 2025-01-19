@@ -33,9 +33,7 @@ class DisplayAveragesStep:
         # pretty printing the data frame using tabulate
         print(
             "\nDisplaying average difference between the 24 hour percent change of each "
-            "coin \nand the 24 hour percent change of Bitcoin, across all executions. \nA "
-            "POSITIVE value means the coin has had a higher percentage change than Bitcoin."
-            "\nA NEGATIVE value means the coin has had a lower percentage change than Bitcoin."
+            "coin \nand the 24 hour percent change of Bitcoin, across all executions."
         )
         print(
             "\n\n"
