@@ -8,6 +8,7 @@ from src.util.config import (
     AVG_BITCOIN_DIFF_DATA_LOCATION,
     BITCOIN_COMPARISON_DATA_LOCATION,
 )
+from src.util.dataframe_ops import read_csv, write_csv
 
 
 class AverageDifferenceStep:
@@ -43,7 +44,7 @@ class AverageDifferenceStep:
                 columns={"24h_against_bitcoin": "Avg_24h_Bitcoin_Diff"}
             )
 
-            bitcoin_diff_df.to_csv(self.avg_bitcoin_diff_csv, index=False)
+            write_csv(self.avg_bitcoin_diff_csv, bitcoin_diff_df)
             return bitcoin_diff_df
 
     def read_all_bitcoin_comparisons(self) -> pd.DataFrame:
@@ -51,7 +52,7 @@ class AverageDifferenceStep:
 
         for file_name in os.listdir(self.bitcoin_comparison_directory):
             if file_name.endswith(".csv"):
-                df = pd.read_csv(join(self.bitcoin_comparison_directory, file_name))
+                df = read_csv(join(self.bitcoin_comparison_directory, file_name))
                 comparison_dfs.append(df)
 
         all_dfs = pd.concat(comparison_dfs, ignore_index=True)

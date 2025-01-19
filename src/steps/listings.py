@@ -5,6 +5,7 @@ import pandas as pd
 
 from src.api.coin_market_cap_api import CoinMarketCapApi
 from src.util.config import LISTINGS_CSV_FORMAT, LISTINGS_DATA_LOCATION
+from src.util.dataframe_ops import write_csv
 
 
 class ListingsStep:
@@ -36,7 +37,7 @@ class ListingsStep:
             listings = self.fetch_listings_upstream()
             # Build out a flattened dataframe
             df = pd.json_normalize(listings)
-            df.to_csv(self.listings_csv, index=False)
+            write_csv(self.listings_csv, df)
             return df
 
     def fetch_listings_upstream(self) -> List[Dict]:

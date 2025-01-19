@@ -12,6 +12,7 @@ from src.util.config import (
     PRICING_CSV_FORMAT,
     PRICING_DATA_LOCATION,
 )
+from src.util.dataframe_ops import read_csv, write_csv
 
 
 class BitcoinComparisonStep:
@@ -52,7 +53,7 @@ class BitcoinComparisonStep:
     def generate_bitcoin_comparison(self) -> Optional[pd.DataFrame]:
 
         if not exists(self.bitcoin_comparison_csv):
-            pricing_df = pd.read_csv(self.pricing_csv)
+            pricing_df = read_csv(self.pricing_csv)
             pricing_df["bitcoin_percent_change_24h"] = self.bitcoin_percent_change_24h()
 
             # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
@@ -65,7 +66,7 @@ class BitcoinComparisonStep:
             comparison_df = self.trim_df_values(pricing_df)
             sorted_df = self.sort_df(comparison_df)
 
-            sorted_df.to_csv(self.bitcoin_comparison_csv, index=False)
+            write_csv(self.bitcoin_comparison_csv, sorted_df)
             return sorted_df
 
     def trim_df_values(self, comparison_df: pd.DataFrame) -> pd.DataFrame:
@@ -104,7 +105,7 @@ class BitcoinComparisonStep:
         # Need to get the value of bitcoin from one of the other layers
         # It may be worthwhile modifying in the near future to have a
         # clean set of listings... TBD
-        listing_df = pd.read_csv(self.listings_csv)
+        listing_df = read_csv(self.listings_csv)
         # get the bitcoin quote from the listing df
         bitcoin_change = listing_df.loc[listing_df["name"] == "Bitcoin"][
             "quote.USD.percent_change_24h"
