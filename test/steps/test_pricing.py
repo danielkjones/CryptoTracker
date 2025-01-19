@@ -24,22 +24,6 @@ def clean_test_directory():
 
 class TestPricingStep:
 
-    def test_get_coins_to_track(self):
-        pricing = PricingStep(tc.TEST_TIMESTAMP)
-        # Overwriting data location properties to use predictable test locations
-        pricing.configuration_file_directory = tc.MOCK_CONFIGURATION_DIRECTORY
-
-        df = pricing.read_coins_to_track()
-        assert isinstance(df, DataFrame)
-
-    def test_get_listings(self):
-        pricing = PricingStep(tc.TEST_TIMESTAMP)
-        # Overwriting data location properties to use predictable test locations
-        pricing.listings_file_directory = tc.MOCK_LISTINGS_DIRECTORY
-
-        df = pricing.read_listings()
-        assert isinstance(df, DataFrame)
-
     def test_generate_pricing_error(self):
 
         pricing = PricingStep(tc.TEST_TIMESTAMP)

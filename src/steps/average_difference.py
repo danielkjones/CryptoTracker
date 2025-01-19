@@ -20,10 +20,19 @@ class AverageDifferenceStep:
         self.avg_bitcoin_diff_directory = AVG_BITCOIN_DIFF_DATA_LOCATION
         self.avg_bitcoin_diff_file_format = AVG_BITCOIN_DIFF_CSV_FORMAT
 
+    @property
+    def avg_bitcoin_diff_csv(self) -> str:
+        return join(
+            self.avg_bitcoin_diff_directory,
+            self.avg_bitcoin_diff_file_format.format(self.timestamp),
+        )
+
     def generate_average_difference(self) -> pd.DataFrame:
-        if not self.dataset_exists():
+        if not exists(self.avg_bitcoin_diff_csv):
             comparisons_df = self.read_all_bitcoin_comparisons()
 
+            # Group by symbol across all datasets and get average difference
+            # in 24h percent change against bitcoin
             avg_comparisons_df = (
                 comparisons_df.groupby("symbol")["24h_against_bitcoin"]
                 .mean()
@@ -34,8 +43,7 @@ class AverageDifferenceStep:
                 columns={"24h_against_bitcoin": "Avg_24h_Bitcoin_Diff"}
             )
 
-            self.write_dataframe(bitcoin_diff_df)
-
+            bitcoin_diff_df.to_csv(self.avg_bitcoin_diff_csv, index=False)
             return bitcoin_diff_df
 
     def read_all_bitcoin_comparisons(self) -> pd.DataFrame:
@@ -48,23 +56,3 @@ class AverageDifferenceStep:
 
         all_dfs = pd.concat(comparison_dfs, ignore_index=True)
         return all_dfs
-
-    def dataset_exists(self) -> bool:
-        """Check to see if the file already exists. If it does
-        we should use that file instead of recreating.
-
-        Returns:
-            bool: True if exists, False otherwise
-        """
-        dataset_path = join(
-            self.avg_bitcoin_diff_directory,
-            self.avg_bitcoin_diff_file_format.format(self.timestamp),
-        )
-        return exists(dataset_path)
-
-    def write_dataframe(self, df: pd.DataFrame) -> None:
-        dataset_path = join(
-            self.avg_bitcoin_diff_directory,
-            self.avg_bitcoin_diff_file_format.format(self.timestamp),
-        )
-        df.to_csv(dataset_path, index=False)

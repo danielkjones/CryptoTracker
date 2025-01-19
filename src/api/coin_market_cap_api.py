@@ -108,20 +108,15 @@ class CoinMarketCapApi:
 
     @retry(tries=7, delay=3, backoff=5)
     def get_metadata(self, ids: List[str]) -> List[Dict]:
-        """Get Metadata on a singular or collection of CryptoCurrencies.
-
-        Using V1 endpoint instead of V2 endpoint, as we are making the assumption that
-        only the highest rank coin with a given symbol is a coin of interest.
+        """Get Metadata on a singular or collection of CryptoCurrencies using CMC IDs.
 
         NOTE: Using a large number of retries, delay, and backoff since this API has caused
             multiple 429 Client errors. May have room for optimization.
 
         Reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV1CryptocurrencyInfo
 
-        V2 reference: https://coinmarketcap.com/api/documentation/v1/#operation/getV2CryptocurrencyInfo
-
         Args:
-            symbols (str): Comma separated value of Cypto Symbols to gather data on
+            symbols (str): Comma separated value of crypto CMC IDs to gather data on
 
         Returns:
             Dict: Metadata "data" object from the API response

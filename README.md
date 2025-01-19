@@ -8,7 +8,6 @@ Feature
 - Basic logging
 - Error handling if any of the datasets do not exist
 
-
 Testings
 - Confirm that the CSV outputs all make sense
 - Run end-to-end test on the code

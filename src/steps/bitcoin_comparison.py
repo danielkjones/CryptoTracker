@@ -28,10 +28,31 @@ class BitcoinComparisonStep:
         self.bitcoin_comparison_directory = BITCOIN_COMPARISON_DATA_LOCATION
         self.bitcoin_comparison_file_format = BITCOIN_COMPARISON_CSV_FORMAT
 
+    @property
+    def pricing_csv(self) -> str:
+        return join(
+            self.pricing_file_directory,
+            self.pricing_file_format.format(self.timestamp),
+        )
+
+    @property
+    def listings_csv(self) -> str:
+        return join(
+            self.listings_file_directory,
+            self.listings_file_format.format(self.timestamp),
+        )
+
+    @property
+    def bitcoin_comparison_csv(self) -> str:
+        return join(
+            self.bitcoin_comparison_directory,
+            self.bitcoin_comparison_file_format.format(self.timestamp),
+        )
+
     def generate_bitcoin_comparison(self) -> Optional[pd.DataFrame]:
 
-        if not self.dataset_exists():
-            pricing_df = self.read_pricing()
+        if not exists(self.bitcoin_comparison_csv):
+            pricing_df = pd.read_csv(self.pricing_csv)
             pricing_df["bitcoin_percent_change_24h"] = self.bitcoin_percent_change_24h()
 
             # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
@@ -44,17 +65,8 @@ class BitcoinComparisonStep:
             comparison_df = self.trim_df_values(pricing_df)
             sorted_df = self.sort_df(comparison_df)
 
-            self.write_df(sorted_df)
+            sorted_df.to_csv(self.bitcoin_comparison_csv, index=False)
             return sorted_df
-
-    def read_pricing(self) -> pd.DataFrame:
-        df = pd.read_csv(
-            join(
-                self.pricing_file_directory,
-                self.pricing_file_format.format(self.timestamp),
-            )
-        )
-        return df
 
     def trim_df_values(self, comparison_df: pd.DataFrame) -> pd.DataFrame:
         """There are only a few values that we want to have in this dataset
@@ -88,36 +100,11 @@ class BitcoinComparisonStep:
             by="24h_against_bitcoin", ascending=True
         ).reset_index(drop=True)
 
-    def dataset_exists(self) -> bool:
-        """Check to see if the file already exists. If it does
-        we should use that file instead of recreating.
-
-        Returns:
-            bool: True if exists, False otherwise
-        """
-        dataset_path = join(
-            self.bitcoin_comparison_directory,
-            self.bitcoin_comparison_file_format.format(self.timestamp),
-        )
-        return exists(dataset_path)
-
-    def write_df(self, comparison_df: pd.DataFrame) -> None:
-        dataset_path = join(
-            self.bitcoin_comparison_directory,
-            self.bitcoin_comparison_file_format.format(self.timestamp),
-        )
-        comparison_df.to_csv(dataset_path, index=False)
-
     def bitcoin_percent_change_24h(self) -> float:
         # Need to get the value of bitcoin from one of the other layers
         # It may be worthwhile modifying in the near future to have a
         # clean set of listings... TBD
-        listing_df = pd.read_csv(
-            join(
-                self.listings_file_directory,
-                self.listings_file_format.format(self.timestamp),
-            )
-        )
+        listing_df = pd.read_csv(self.listings_csv)
         # get the bitcoin quote from the listing df
         bitcoin_change = listing_df.loc[listing_df["name"] == "Bitcoin"][
             "quote.USD.percent_change_24h"
