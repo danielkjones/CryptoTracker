@@ -28,7 +28,8 @@ class ListingsStep:
         """
         if not self.dataset_exists():
             listings = self.fetch_listings_upstream()
-            df = pd.DataFrame(listings)
+            # Build out a flattened dataframe
+            df = pd.json_normalize(listings)
             self.write_dataframe(df=df)
             return df
 

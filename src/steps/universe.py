@@ -42,8 +42,8 @@ class UniverseStep:
             crypto_ids = self.read_listings_ids()
             # Call the upstream Metadata API to gather the information.
             metadata = self.get_metadata(crypto_ids)
-            # Build out a pd dataframe
-            df = pd.DataFrame(metadata)
+            # Build out a flattened dataframe
+            df = pd.json_normalize(metadata)
             # write the dataframe to .csv in datalake
             self.write_dataframe(df)
             # return the dataframe to be used by other workflow steps

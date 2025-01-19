@@ -32,17 +32,12 @@ class BitcoinComparisonStep:
 
         if not self.dataset_exists():
             pricing_df = self.read_pricing()
-            pricing_df["percent_change_24h"] = pricing_df["quote"].apply(
-                self.unpack_percent_change_24h
-            )
-
-            bitcoin_percentage_change = self.bitcoin_percent_change_24h()
-            pricing_df["bitcoin_percent_change_24h"] = bitcoin_percentage_change
+            pricing_df["bitcoin_percent_change_24h"] = self.bitcoin_percent_change_24h()
 
             # Finding difference. NEGATIVE value means that the coin changed LESS than bitcoin. POSITIVE value means
             # the coin changed MORE than bitcoin.
             pricing_df["24h_against_bitcoin"] = (
-                pricing_df["percent_change_24h"]
+                pricing_df["quote.USD.percent_change_24h"]
                 - pricing_df["bitcoin_percent_change_24h"]
             )
 
@@ -73,7 +68,7 @@ class BitcoinComparisonStep:
                 "symbol",
                 "name",
                 "24h_against_bitcoin",
-                "percent_change_24h",
+                "quote.USD.percent_change_24h",
                 "bitcoin_percent_change_24h",
                 "LoadedWhen",
             ]
@@ -124,13 +119,7 @@ class BitcoinComparisonStep:
             )
         )
         # get the bitcoin quote from the listing df
-        bitcoin_quote = listing_df.loc[listing_df["name"] == "Bitcoin"]["quote"][0]
-        bitcoin_percent_change_24h = self.unpack_percent_change_24h(bitcoin_quote)
-        return bitcoin_percent_change_24h
-
-    def unpack_percent_change_24h(self, quote: str):
-        # Unpack price information
-        # Need to use ast due to the formatting constraints of pandas .to_csv.
-        # May be worth investigating a better way in the future
-        jsn = ast.literal_eval(quote)
-        return jsn.get("USD").get("percent_change_24h")
+        bitcoin_change = listing_df.loc[listing_df["name"] == "Bitcoin"][
+            "quote.USD.percent_change_24h"
+        ]
+        return bitcoin_change

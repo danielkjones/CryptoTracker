@@ -1,4 +1,4 @@
-symbol,name,24h_against_bitcoin,percent_change_24h,bitcoin_percent_change_24h,LoadedWhen
+symbol,name,24h_against_bitcoin,quote.USD.percent_change_24h,bitcoin_percent_change_24h,LoadedWhen
 BTC,Bitcoin,0.0,2.76610597,2.76610597,20250116000000
 XMR,Monero,0.8064526500000002,3.57255862,2.76610597,20250116000000
 ETH,Ethereum,2.34149104,5.10759701,2.76610597,20250116000000
