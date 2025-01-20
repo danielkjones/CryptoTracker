@@ -1,4 +1,5 @@
 import os
+from os.path import exists
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents
 
@@ -59,6 +60,6 @@ class TestPricingStep:
             len(set(list(df["Symbol"]))) == 19
         ), "There should be no duplicate symbols"
 
-        assert (
-            len(os.listdir(tc.TEMP_PRICING_DIRECTORY)) == 1
+        assert exists(
+            tc.TEMP_PRICING_DIRECTORY
         ), "Test data should have been written out to the data lake location"

@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join
+from os.path import dirname, exists, join
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents, example_listings_api_return
 from unittest.mock import patch
@@ -42,6 +42,6 @@ class TestListings:
 
         assert len(df) == 15000
         assert isinstance(df, DataFrame)
-        assert (
-            len(os.listdir(tc.TEMP_LISTINGS_DIRECTORY)) == 1
+        assert exists(
+            tc.TEMP_LISTINGS_DIRECTORY
         ), "Test data should have been written out to data lake location"

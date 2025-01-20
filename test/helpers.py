@@ -64,7 +64,9 @@ def delete_directory_contents(directory: str) -> None:
     """
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path):
+        # Little hacky, but we need to keep the directory structure in tact.
+        # .mark_keep is how we keep the folders around in the git repo.
+        if os.path.isfile(file_path) and ".mark_keep" not in file_path:
             os.remove(file_path)
 
 

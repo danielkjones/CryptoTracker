@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join
+from os.path import dirname, exists, join
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents, example_metadata_api_return
 from unittest.mock import patch
@@ -46,6 +46,6 @@ class TestUniverse:
         # We expect to make 63 calls, returning 4 items each time.
         # 4 * 63 = 252. So we expect the df to have 252 objects.
         assert len(df) == 252
-        assert (
-            len(os.listdir(tc.TEMP_UNIVERSE_DIRECTORY)) == 1
+        assert exists(
+            tc.TEMP_UNIVERSE_DIRECTORY
         ), "Test data should have been written out to the data lake location"

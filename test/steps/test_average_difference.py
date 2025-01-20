@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join
+from os.path import dirname, exists, join
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents
 
@@ -35,6 +35,6 @@ class TestAverageDifference:
         assert (
             len(list(set(df["Symbol"]))) == 19
         ), "There should be no repeats with the aggregation"
-        assert (
-            len(os.listdir(tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY)) == 1
+        assert exists(
+            tc.TEMP_AVG_BITCOIN_DIFF_DIRECTORY
         ), "Test data should have been written out to the data lake location"

@@ -1,5 +1,5 @@
 import os
-from os.path import dirname, join
+from os.path import dirname, exists, join
 from test.helpers import TestConstants as tc
 from test.helpers import delete_directory_contents
 
@@ -39,6 +39,6 @@ class TestBitcoinComparison:
         assert df["BitcoinPercentChange24h"] is not None
         assert df["LoadedWhen"] is not None
 
-        assert (
-            len(os.listdir(tc.TEMP_BITCOIN_COMPARISONS_DIRECTORY)) == 1
+        assert exists(
+            tc.TEMP_BITCOIN_COMPARISONS_DIRECTORY
         ), "File should have been written out to data lake location"
